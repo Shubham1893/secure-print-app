@@ -31,22 +31,9 @@ It creates a secure, temporary bridge between you and the printer, ensuring your
 
 ---
 
-## 📸 Screenshots  
 
-_Add screenshots by uploading images in GitHub Issues and pasting the links here._  
 
-- **Login Page**  
-![Your Screenshot Here](#)  
-
-- **User Dashboard**  
-![Your Screenshot Here](#)  
-
-- **Secure Print Session**  
-![Your Screenshot Here](#)  
-
----
-
-## 核心功能 (Core Features)  
+(Core Features)  
 
 - 🔐 **Secure Authentication**: JWT-based login and registration.  
 - 🗂️ **Private Document Management**: Upload, view, delete from personal dashboard.  
@@ -113,7 +100,7 @@ See [`LICENSE`](LICENSE) for more information.
 
 <div align="center">
 
-💡 Made with ❤️ by **[Your Name]**
+💡 Made with ❤️ by **Shubham**
 
 </div>
 
