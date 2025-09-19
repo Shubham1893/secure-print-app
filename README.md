@@ -84,7 +84,36 @@ This project follows the **MERN Stack Architecture**.
 - npm  
 - MongoDB (local or Atlas)  
 
-### 1. Clone the Repository  
-```bash
-git clone https://github.com/your-username/secure-print-app.git
-cd secure-print-app
+## ⚡ Installation & Setup  
+
+| Step | Command / Instruction |
+|------|------------------------|
+| **2. Install Backend Dependencies** | ```bash<br>cd backend<br>npm install<br>``` |
+| **3. Install Frontend Dependencies** | ```bash<br>cd ../frontend<br>npm install<br>``` |
+| **4. Configure Environment Variables** | Create a `.env` file inside `/backend` and add:<br><br>```env<br>MONGO_URI=your_mongodb_connection_string<br>JWT_SECRET=your_super_strong_jwt_secret<br>PORT=5000<br>EMAIL_USER=your_email@gmail.com<br>EMAIL_PASS=your_gmail_app_password<br>FRONTEND_URL=http://localhost:3000<br>``` |
+| **5. Run the Application** | **Backend (Terminal 1):**<br>```bash<br>cd backend<br>npm start   # or npm run dev<br>```<br><br>**Frontend (Terminal 2):**<br>```bash<br>cd frontend<br>npm start<br>```<br><br>🌐 **Frontend** → [http://localhost:3000](http://localhost:3000)<br>⚙️ **Backend** → [http://localhost:5000](http://localhost:5000) |
+
+---
+
+## 🔮 Future Scope  
+
+- [ ] **QR Code Sharing** – Generate QR codes for print links.  
+- [ ] **Folder Organization** – Organize documents into folders.  
+- [ ] **Drag-and-Drop Uploads** – Enhance file upload UX.  
+- [ ] **Manual Session Revocation** – Manually expire active links.  
+
+---
+
+## 📜 License  
+
+Distributed under the **MIT License**.  
+See [`LICENSE`](LICENSE) for more information.  
+
+---
+
+<div align="center">
+
+💡 Made with ❤️ by **[Your Name]**
+
+</div>
+
