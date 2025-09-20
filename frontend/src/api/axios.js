@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. 👇 PASTE YOUR DEPLOYED BACKEND URL HERE
 //    Make sure it includes the '/api' at the end.
-const DEPLOYED_URL = 'https://secure-print-app.onrender.com';
+const DEPLOYED_URL = 'https://secure-print-app-1-0.onrender.com';
 
 // 2. Update the baseURL for the main 'api' instance
 const api = axios.create({
