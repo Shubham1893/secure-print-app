@@ -5,7 +5,8 @@ const PrintSessionSchema = new mongoose.Schema({
   otp: { type: String, required: true },
   token: { type: String, required: true, unique: true },
   isVerified: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now, expires: '5m' }, // OTP and session expire in 5 mins
+  // UPDATED: Changed expiration from 5m to 3m
+  createdAt: { type: Date, default: Date.now, expires: '3m' }, 
 });
 
 module.exports = mongoose.model('PrintSession', PrintSessionSchema);

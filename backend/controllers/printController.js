@@ -1,7 +1,9 @@
+
 const jwt = require('jsonwebtoken');
 const PrintSession = require('../models/PrintSession');
 const Document = require('../models/Document');
-const ShortLink = require('../models/ShortLink'); // <-- ADDED
+const ShortLink = require('../models/ShortLink');
+const User = require('../models/User'); // <-- ADDED: Need this to find user's email
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
@@ -14,12 +16,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// A simple helper function to generate a random code
 function generateShortCode(length = 6) {
   return Math.random().toString(36).substring(2, 2 + length);
 }
 
-// 1. Generate Print Link (and OTP)
+// 1. Generate Print Link (No changes here)
 exports.generatePrintLink = async (req, res) => {
   try {
     const user = req.user;
@@ -28,7 +29,6 @@ exports.generatePrintLink = async (req, res) => {
 
     await PrintSession.create({ user: user._id, otp, token: longToken });
 
-    // --- NEW SHORT LINK LOGIC ---
     const shortCode = generateShortCode();
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const longUrl = `${frontendUrl}/print/${longToken}`;
@@ -37,19 +37,18 @@ exports.generatePrintLink = async (req, res) => {
     
     const serverUrl = `${req.protocol}://${req.get('host')}`;
     const shareableLink = `${serverUrl}/s/${shortCode}`;
-    // --- END OF NEW LOGIC ---
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: 'Your SecurePrint One-Time Password (OTP)',
-      text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
+      text: `Your OTP is: ${otp}. It is valid for 3 minutes.`,
     };
     await transporter.sendMail(mailOptions);
     
     res.status(200).json({ 
         message: 'OTP sent to your email. Share the OTP and the link with the print shop.',
-        shareableLink // This is now the short link
+        shareableLink
     });
   } catch (error) {
     console.error(error);
@@ -57,7 +56,7 @@ exports.generatePrintLink = async (req, res) => {
   }
 };
 
-// 2. Verify OTP
+// 2. Verify OTP - UPDATED SESSION TIME
 exports.verifyOtp = async (req, res) => {
   const { token, otp } = req.body;
   try {
@@ -70,9 +69,51 @@ exports.verifyOtp = async (req, res) => {
     session.isVerified = true;
     await session.save();
 
-    const sessionToken = jwt.sign({ sessionId: session._id }, process.env.JWT_SECRET, { expiresIn: '4m' });
+    // UPDATED: Changed expiration from 4m to 2m
+    const sessionToken = jwt.sign({ sessionId: session._id }, process.env.JWT_SECRET, { expiresIn: '2m' });
 
     res.json({ message: 'OTP verified successfully.', sessionToken });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// 3. NEW FUNCTION: Resend OTP
+exports.resendOtp = async (req, res) => {
+  const { token } = req.body;
+  try {
+    const session = await PrintSession.findOne({ token });
+
+    if (!session) {
+      return res.status(404).json({ message: 'This print session is invalid or has expired.' });
+    }
+
+    // Find the user to get their email
+    const user = await User.findById(session.user);
+    if (!user) {
+      return res.status(404).json({ message: 'Could not find the associated user account.' });
+    }
+
+    // Generate a new OTP
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Update the session with the new OTP and reset the timer
+    session.otp = newOtp;
+    session.createdAt = Date.now();
+    await session.save();
+
+    // Send the new OTP via email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Your New SecurePrint OTP',
+      text: `Your new OTP is: ${newOtp}. It is valid for 3 minutes.`,
+    };
+    await transporter.sendMail(mailOptions);
+    
+    res.status(200).json({ message: 'A new OTP has been sent to the document owner.' });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
@@ -138,3 +179,9 @@ exports.protectPrintSession = async (req, res, next) => {
     return res.status(401).json({ message: 'No session token.' });
   }
 };
+
+
+
+
+
+
