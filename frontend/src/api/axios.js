@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// 1. 👇 PASTE YOUR DEPLOYED BACKEND URL HERE
+//    Make sure it includes the '/api' at the end.
+const DEPLOYED_URL = 'https://secure-print-app.onrender.com';
+
+// 2. Update the baseURL for the main 'api' instance
 const api = axios.create({
-  baseURL: '/api', // The proxy will handle this
+  baseURL: DEPLOYED_URL,
 });
 
 // Add a request interceptor to include the token in headers
@@ -15,9 +20,9 @@ api.interceptors.request.use((config) => {
 
 export default api;
 
-// A separate instance for print sessions
+// 3. Also update the baseURL for the separate 'printApi' instance
 export const printApi = axios.create({
-  baseURL: '/api',
+  baseURL: DEPLOYED_URL,
 });
 
 printApi.interceptors.request.use((config) => {
